@@ -1,11 +1,14 @@
+import time
 from typing import Union
 import copy
-
 import numpy as np
 import matplotlib.pyplot as plt
 
+from connectivity_graph import ConnectivityGraph
 
-def solve_cube(spacegrid: np.array, snake_remainder: list, start_position: np.array, prev_position: np.array):
+
+def solve_cube(spacegrid: np.array, snake_remainder: list, start_position: np.array, prev_position: np.array,
+               connectivity_graph: ConnectivityGraph = None):
     """
     This recursive function tries filling the next link of the snake.
     If it fails in all directions - it returns False
@@ -15,16 +18,21 @@ def solve_cube(spacegrid: np.array, snake_remainder: list, start_position: np.ar
     :param snake_remainder: a list of numbers representing the snake's link sizes
     :param prev_position: the cube-before-last position
     :param start_position: the last cube position
+    :param step_num: the number of steps required to reach a solution
+    :param connectivity_graph: a connectivity graph, if added stops solution if solution reaches discontinuity
     :return:
     """
     if not snake_remainder:
-        return spacegrid
+        return spacegrid, 1
     dir_grid = get_directions(start_position, prev_position)
+    steps = 0
     for direction in dir_grid:
         success = True
         position = copy.deepcopy(start_position)
+        temp_graph = copy.deepcopy(connectivity_graph)
         temp_spacegrid = copy.deepcopy(spacegrid)
         for i in range(snake_remainder[0]):
+            steps += 1
             position += direction
             if min(position) < 0 or max(position) > (len(spacegrid) - 1) \
                     or spacegrid[position[0], position[1], position[2]]:
@@ -32,11 +40,16 @@ def solve_cube(spacegrid: np.array, snake_remainder: list, start_position: np.ar
                 break
             temp_spacegrid[position[0], position[1], position[2]] = \
                 spacegrid[start_position[0], start_position[1], start_position[2]] + i + 1
+            if temp_graph:
+                temp_graph.delete_node((position[0], position[1], position[2]))
+        if temp_graph and success:
+            success = temp_graph.is_connected()
         if success:
-            solution = solve_cube(temp_spacegrid, snake_remainder[1:], position, start_position)
+            solution, temp_steps = solve_cube(temp_spacegrid, snake_remainder[1:], position, start_position, temp_graph)
+            steps += temp_steps
             if solution is not False:
-                return solution
-    return False
+                return solution, steps
+    return False, steps
 
 
 def get_directions(start_position, prev_position):
@@ -53,58 +66,25 @@ def get_directions(start_position, prev_position):
         return all_directions[:4]
 
 
-def solve_snake(snake: list, side_size: int, starting_positions: np.array) -> Union[np.array, bool]:
+def solve_snake(snake: list, side_size: int, starting_positions: np.array, check_connectivity: bool = False) \
+        -> Union[np.array, bool]:
     """ attempts solving the puzzle from different starting positions, if no positions returns a valid solution
         return false
     """
     space_grid = np.zeros(shape=(side_size, side_size, side_size))
     snake[0] -= 1
+    step_num = 0
     for position in starting_positions:
         temp_space_grid = space_grid
+        connectivity_graph = ConnectivityGraph(side_size) if check_connectivity else None
         temp_space_grid[position[0], position[1], position[2]] = 1
-        solution = solve_cube(temp_space_grid, snake, position, None)
+        if connectivity_graph:
+            connectivity_graph.delete_node((position[0], position[1], position[2]))
+        solution, steps = solve_cube(temp_space_grid, snake, position, None, connectivity_graph)
+        step_num += steps
         if solution is not False:
-            return solution
-    return False
-
-
-class ConnectivityGraph:
-    def __init__(self, side_length):
-        self._side_length = side_length
-        self.graph = {}
-        for i in range(side_length):
-            for j in range(side_length):
-                for k in range(side_length):
-                    self.graph[(i, j, k)] = self._get_neighbor_nodes((i, j, k))
-
-    def delete_node(self, node):
-        edges = self.graph.pop(node)
-        for neighbor in edges:
-            self.graph[neighbor].remove(node)
-
-    def _get_neighbor_nodes(self, nd):
-        neighbor_nodes = {(nd[0] - 1, nd[1], nd[2]),
-                          (nd[0] + 1, nd[1], nd[2]),
-                          (nd[0], nd[1] - 1, nd[2]),
-                          (nd[0], nd[1] + 1, nd[2]),
-                          (nd[0], nd[1], nd[2] - 1),
-                          (nd[0], nd[1], nd[2] + 1)}
-        for node in neighbor_nodes:
-            if -1 in node or self._side_length in node:
-                neighbor_nodes.remove(node)
-        return neighbor_nodes
-
-    def is_connected(self):
-        non_tested_nodes = {self.graph.keys()}
-        queue = [non_tested_nodes.pop()]
-        while True:
-            if not non_tested_nodes:
-                return True
-            for node in self.graph.get(queue[0]):
-                if node in non_tested_nodes:
-                    queue.append(node)
-                    non_tested_nodes.remove(node)
-            queue.pop(0)
+            return solution, step_num
+    return False, step_num
 
 
 def present_solution(spacegrid: np.array):
@@ -150,20 +130,25 @@ def explode(data):
     return data_e
 
 
-# main
-side_size = 3
-# snake = [2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 3, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 3, 1, 1, 2, 1, 2]
-snake = [3, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 2]
-cube_num = sum(snake)
-print(f'number of cubes: {cube_num}')
-if cube_num != side_size ** 3:
-    print(f'wrong parameters, please check the snake array/side size')
-else:
-    print('valid cube')
+if __name__ == '__main__':
+    # side_size, snake = 2, [2, 1, 1, 1, 1, 1, 1]
+    # side_size, snake = 3, [3, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 2]
+    side_size, snake = 4, [2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 3, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1,
+                           1, 1, 1, 2, 1, 2, 1, 2, 1, 3, 1, 1, 2, 1, 2]
+    cube_num = sum(snake)
+    print(f'number of cubes: {cube_num}')
+    if cube_num != side_size ** 3:
+        print(f'wrong parameters, please check the snake array/side size')
+    else:
+        print('valid cube')
 
-starting_positions = np.array([[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 1]])
-solution_grid = solve_snake(snake, side_size, starting_positions)
-if solution_grid is not False:
-    present_solution(solution_grid)
-else:
-    print('no solution was found')
+    starting_positions = np.array([[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 1]])
+    t = time.time()
+    solution_grid, step_num = solve_snake(snake, side_size, starting_positions, check_connectivity=True)
+    print(f'running time: {time.time() - t}')
+    if solution_grid is not False:
+        print('solution has been reached!')
+        print(f'complexity report:\nproblem complexity: 4^{len(snake)} ({4**len(snake)} steps)\nsteps performed: {step_num}')
+        present_solution(solution_grid)
+    else:
+        print(f'no solution found, steps performed: {step_num}')
