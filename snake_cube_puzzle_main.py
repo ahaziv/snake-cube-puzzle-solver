@@ -144,7 +144,7 @@ if __name__ == '__main__':
 
     starting_positions = np.array([[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 1]])
     t = time.time()
-    solution_grid, step_num = solve_snake(snake, side_size, starting_positions, check_connectivity=True)
+    solution_grid, step_num = solve_snake(snake, side_size, starting_positions, check_connectivity=False)
     print(f'running time: {time.time() - t}')
     if solution_grid is not False:
         print('solution has been reached!')
