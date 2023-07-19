@@ -26,9 +26,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://github.com/ahaziv/snake-cube-puzzle-solver/snake_cube_solution.png)
 
 This solver was written following a dinner at a friends house, He had this 4x4 snake cube puzzle which I picked up and couldn't solve by hand. This code was written on the next weekend so the cube could sit nice and tidy on my friends shelf. 
+For whoever isn't familiar with such puzzles: https://www.youtube.com/watch?v=iTzVPgFjE9c
 
 This code was written purely for the sports of it, and I found tackling the problem pretty educational  
 * It has some neat implementation of algorithmic principles (such of BFS) over 3D grid space. 
@@ -57,7 +57,14 @@ simply load the files and run the main file (numpy and matplotlib required).
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+The main script provides a few sample inputs, in order to add your own:
+
+1. Unfold your snake cube in the as shown in the illustration.
+2. Count the number of new steps each link of the snake has, in this case it will be: [3,1,1,2,1,1,2,1,1,1,1,1,1,1,2,1,1,1,2,2]
+   (note that the first link will have an extra cube)
+3. Insert these numbers as a list.
+4. If you are attempting a different shaped cube (which is not 3x3 or 4x4) you will have to manually choose new starting points for the solution.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
