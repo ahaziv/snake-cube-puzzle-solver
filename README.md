@@ -25,7 +25,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
+![snake_cube_ solution](https://github.com/ahaziv/snake-cube-puzzle-solver/assets/46624561/0997d8fd-72c1-4e44-9074-8c90e81ff158)
 
 This solver was written following a dinner at a friends house, He had this 4x4 snake cube puzzle which I picked up and couldn't solve by hand. This code was written on the next weekend so the cube could sit nice and tidy on my friends shelf. 
 For whoever isn't familiar with such puzzles: https://www.youtube.com/watch?v=iTzVPgFjE9c
@@ -58,7 +58,7 @@ simply load the files and run the main file (numpy and matplotlib required).
 ## Usage
 
 The main script provides a few sample inputs, in order to add your own:
-
+![flat_snake_numbered](https://github.com/ahaziv/snake-cube-puzzle-solver/assets/46624561/10a60595-31a5-414c-b2aa-bed672d787dc)
 1. Unfold your snake cube in the as shown in the illustration.
 2. Count the number of new steps each link of the snake has, in this case it will be: [3,1,1,2,1,1,2,1,1,1,1,1,1,1,2,1,1,1,2,2]
    (note that the first link will have an extra cube)
