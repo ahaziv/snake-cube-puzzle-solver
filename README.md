@@ -72,9 +72,9 @@ The main script provides a few sample inputs, in order to add your own:
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@ziv_aharoni](https://www.linkedin.com/in/ziv-aharoni-3909271b0/) - ahaziv@gmail.com
+[@ziv_aharoni](https://www.linkedin.com/in/ziv-aharoni-3909271b0/) - ahaziv@gmail.com
 
-Project Link: [https://github.com/ahaziv/snake-cube-puzzle-solver](https://github.com/ahaziv/snake-cube-puzzle-solver)
+[https://github.com/ahaziv/snake-cube-puzzle-solver](https://github.com/ahaziv/snake-cube-puzzle-solver)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
