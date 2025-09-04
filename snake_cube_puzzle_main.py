@@ -117,7 +117,7 @@ def present_solution(spacegrid: np.array):
     coordinates = np.zeros(shape=(len(spacegrid) ** 3, 3))
     for i in range(len(spacegrid) ** 3):
         point_location = np.nonzero(spacegrid == i + 1)
-        coordinates[i, :] = [point_location[0] + 0.5, point_location[1] + 0.5, point_location[2] + 0.5]
+        coordinates[i, :] = [point_location[0][0] + 0.5, point_location[1][0] + 0.5, point_location[2][0] + 0.5]
     ax.plot(coordinates[:, 0], coordinates[:, 1], coordinates[:, 2])
     plt.axis("off")
     plt.show()
@@ -132,9 +132,9 @@ def explode(data):
 
 if __name__ == '__main__':
     # side_size, snake = 2, [2, 1, 1, 1, 1, 1, 1]
-    # side_size, snake = 3, [3, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 2]
-    side_size, snake = 4, [2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 3, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1,
-                           1, 1, 1, 2, 1, 2, 1, 2, 1, 3, 1, 1, 2, 1, 2]
+    side_size, snake = 3, [3, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 2]
+    # side_size, snake = 4, [2, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 3, 1, 1, 1, 3, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1,
+    #                        1, 1, 1, 2, 1, 2, 1, 2, 1, 3, 1, 1, 2, 1, 2]
     cube_num = sum(snake)
     print(f'number of cubes: {cube_num}')
     if cube_num != side_size ** 3:
